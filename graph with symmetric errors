@@ -1,0 +1,39 @@
+import ROOT
+from ROOT import TCanvas, TGraphErrors,TLegend
+c=TCanvas("canvas","graph",800,600)
+g=TGraphErrors(5)
+g.SetPoint(0,1,2.1)
+g.SetPoint(1,2,2.9)
+g.SetPoint(2,3,4.05)
+g.SetPoint(3,4,5.2)
+g.SetPoint(4,5,5.95)
+i=0
+while i<5:
+    g.SetPointError(i,0,0.1)
+    i+=1
+
+g.SetMarkerStyle(21)
+g.SetMarkerSize(1)
+g.Draw("APL")
+c.Draw()
+c.SaveAs("nofit.pdf")
+from ROOT import TF1
+f=TF1("f","[0]*x+[1]",0,5)
+#f.SetParameter(0,1)
+#f.SetParameter(1,2)
+f.SetLineColor(2)
+
+g.Draw()
+g.Fit("f")
+
+c.Draw()
+
+legend =TLegend(0.1,0.75,0.38,0.9)
+legend.SetHeader("Legend ","C") 
+
+legend.AddEntry("f","Function af(x) = ax + b","l")
+legend.GetListOfPrimitives().Last().SetLineColor(f.GetLineColor())
+legend.AddEntry("g","Graph with error bars","lep")
+legend.Draw("same")
+c.Draw()
+c.SaveAs("withfit.pdf")
